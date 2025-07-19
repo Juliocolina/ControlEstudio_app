@@ -1,0 +1,46 @@
+@import 'tailwindcss';
+
+/* Estilos base y modo oscuro */
+@layer base {
+
+ @layer base {
+  body {
+    @apply bg-white text-zinc-900 font-sans min-h-screen;
+  }
+
+  /* demás reglas... */
+}
+
+
+  .dark body {
+    @apply bg-zinc-900 text-zinc-100;
+  }
+
+  input,
+  textarea,
+  select {
+    @apply bg-white text-zinc-900;
+  }
+
+  .dark input,
+  .dark textarea,
+  .dark select {
+    @apply bg-zinc-800 text-zinc-100 placeholder-zinc-500 border-zinc-700;
+  }
+
+  button {
+    @apply text-zinc-900;
+  }
+
+  .dark button {
+    @apply text-white;
+  }
+
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}

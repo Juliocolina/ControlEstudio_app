@@ -1,0 +1,265 @@
+🧱 CREACIÓN DE MIGRACIONES
+
+php artisan make:migration nombre_de_la_migracion
+Ejemplo:
+php artisan make:migration create_roles_table
+
+php artisan make:migration nombre_de_la_migracion --create=tabla
+Ejemplo:
+php artisan make:migration create_users_table --create=users
+
+php artisan make:migration nombre_de_la_migracion --table=tabla
+(Ejemplo para modificar una tabla existente)
+php artisan make:migration add_email_to_users_table --table=users
+
+📦 CREAR MIGRACIÓN CON MODELO
+
+php artisan make:model NombreModelo -m
+Ejemplo:
+php artisan make:model Role -m
+(Este comando crea el modelo `Role` y su migración asociada)
+
+🚀 EJECUTAR MIGRACIONES
+
+php artisan migrate
+Ejecuta todas las migraciones pendientes
+
+php artisan migrate --path=database/migrations/nombre_archivo.php
+Ejecuta una migración específica ubicada fuera del directorio convencional
+
+🔁 REVERTIR MIGRACIONES
+
+php artisan migrate:rollback
+Revierte la última tanda de migraciones
+
+php artisan migrate:rollback --step=2
+Revierte las últimas 2 tandas de migraciones
+
+php artisan migrate:reset
+Revierte todas las migraciones
+
+🔄 REFRESCAR MIGRACIONES
+
+php artisan migrate:refresh
+Resetea y vuelve a correr todas las migraciones
+
+php artisan migrate:refresh --seed
+Igual que el anterior, pero corre los seeders luego
+
+🧹 RECREAR TODO DESDE CERO
+
+php artisan migrate:fresh
+Elimina todas las tablas y ejecuta las migraciones de nuevo
+
+php artisan migrate:fresh --seed
+Igual que el anterior, pero también corre los seeders
+
+🕵️‍♂️ ESTADO DE LAS MIGRACIONES
+
+php artisan migrate:status
+Muestra qué migraciones ya se ejecutaron y cuáles no
+
+✅ MIGRAR UNA TABLA ESPECÍFICA EN LARAVEL
+
+Si necesitas migrar una tabla primero (por ejemplo `roles`), sin tocar las demás, usa:
+
+php artisan migrate --path=database/migrations/AAAA_MM_DD_HHmmss_create_roles_table.php
+
+(Reemplaza la fecha y nombre por el de tu archivo real)
+
+⚙ Luego puedes migrar el resto con:
+
+php artisan migrate
+
+Laravel detectará que la tabla `roles` ya está migrada y ejecutará solamente las pendientes.
+
+---
+
+💡 VENTAJAS DE MIGRAR ROLES PRIMERO
+
+- Evitas errores de clave foránea no existente en `users`.
+- No necesitas renombrar archivos ni modificar timestamps.
+- Mantienes el orden original y la integridad de la base de datos.
+
+---
+
+🧠 REGLA CLAVE EN LARAVEL
+
+La tabla que contiene la clave foránea (FK) pertenece a la tabla principal y se debe migrar después.
+
+Ejemplo:
+
+- Tabla `users` tiene `role_id` → `users` pertenece a `roles`
+- Por eso, `roles` debe migrarse primero
+
+---
+
+🔁 REVERTIR MIGRACIONES (si necesitas empezar desde cero)
+
+php artisan migrate:reset        ← Revierte todas las migraciones  
+php artisan migrate:rollback     ← Revierte la última tanda  
+php artisan migrate:fresh        ← Borra todo y vuelve a migrar  
+php artisan migrate:fresh --seed ← Borra todo, migra y ejecuta seeders  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+🧩 TIPOS DE RELACIONES EN LARAVEL Y EJEMPLOS
+
+1️⃣ Relación Uno a Uno (One to One)
+
+- Método: hasOne() / belongsTo()
+
+Ejemplo:
+
+// En modelo User
+public function profile() {
+    return $this->hasOne(Profile::class);
+}
+
+// En modelo Profile
+public function user() {
+    return $this->belongsTo(User::class);
+}
+
+Notas:
+- La tabla secundaria debe tener una FK apuntando a la principal (profile.user_id).
+- Es útil para datos que se extienden de una sola entidad.
+
+2️⃣ Relación Uno a Muchos (One to Many)
+
+- Método: hasMany() / belongsTo()
+
+Ejemplo:
+
+// En modelo Role
+public function users() {
+    return $this->hasMany(User::class);
+}
+
+// En modelo User
+public function role() {
+    return $this->belongsTo(Role::class);
+}
+
+Notas:
+- La tabla hija tiene la FK (users.role_id).
+- Muy común en roles, categorías, etc.
+
+3️⃣ Relación Muchos a Uno (Many to One)
+
+- Método: belongsTo()
+
+Ejemplo:
+
+// En modelo User
+public function aldea() {
+    return $this->belongsTo(Aldea::class);
+}
+
+Notas:
+- Es la perspectiva inversa del One to Many.
+- La FK sigue estando en el modelo actual.
+
+4️⃣ Relación Muchos a Muchos (Many to Many)
+
+- Método: belongsToMany()
+
+Ejemplo:
+
+// En modelo Estudiante
+public function unidadesCurriculares() {
+    return $this->belongsToMany(UnidadCurricular::class, 'notas');
+}
+
+// En modelo UnidadCurricular
+public function estudiantes() {
+    return $this->belongsToMany(Estudiante::class, 'notas');
+}
+
+Notas:
+- Requiere tabla intermedia (pivot).
+- Puedes acceder a los datos extras de la tabla intermedia con ->withPivot('campo').
+
+5️⃣ Relación Uno a Muchos Inversa (Inverse hasMany)
+
+- Método: belongsTo()
+
+Ejemplo:
+
+// En modelo User
+public function coordinador() {
+    return $this->hasOne(Coordinador::class);
+}
+
+// En modelo Coordinador
+public function user() {
+    return $this->belongsTo(User::class);
+}
+
+Notas:
+- Similar a One to One, pero con posibilidad de usar hasMany en el principal si hay varios.
+
+6️⃣ Relaciones con Clave Compuesta (No soportadas nativamente)
+
+Notas:
+- Laravel no soporta claves primarias compuestas para relaciones.
+- Solución: crear relaciones manuales o diseñar la tabla pivot con su propio ID.
+
+7️⃣ Uso de with() para cargar relaciones (Eager Loading)
+
+Ejemplo:
+
+$users = User::with('role')->get();
+
+Notas:
+- Reduce número de consultas.
+- Se usa en controladores para traer relaciones asociadas.
+
+8️⃣ withCount() para contar relaciones
+
+Ejemplo:
+
+$roles = Role::withCount('users')->get();
+
+Notas:
+- Muy útil para estadísticas rápidas (usuarios por rol, etc.).
+
+9️⃣ Cargar múltiples relaciones
+
+Ejemplo:
+
+$estudiantes = Estudiante::with(['user', 'notas.unidadCurricular'])->get();
+
+Notas:
+- Puedes cargar relaciones anidadas.
+
+🔒 Recomendaciones finales
+
+✔ Siempre define bien la FK en las migraciones (`foreignId('rol_id')->constrained()`).
+
+✔ Usa nombres coherentes para las funciones en los modelos (evita ambigüedades).
+
+✔ Recuerda usar factories y seeders para probar las relaciones.
+
+✔ Documenta cada relación con su sentido funcional.
+
