@@ -7,6 +7,6 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Area pEstudiante</h1>
+    <h1>Area Estudiante</h1>
 </body>
 </html>

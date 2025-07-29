@@ -20,20 +20,9 @@
                 {{ __('Usuarios') }}
             </a>
             <a href="https://github.com/laravel/livewire-starter-kit" target="_blank" class="text-sm hover:underline text-zinc-600">
-                {{ __('Registrar aldeas') }}
+                {{ __('Aldeas') }}
             </a>
-             <a href="https://github.com/laravel/livewire-starter-kit" target="_blank" class="text-sm hover:underline text-zinc-600">
-                {{ __('Registrar pnf') }}
-            </a>
-             <a href="https://github.com/laravel/livewire-starter-kit" target="_blank" class="text-sm hover:underline text-zinc-600">
-                {{ __('Registrar materias') }}
-            </a>
-             <a href="https://github.com/laravel/livewire-starter-kit" target="_blank" class="text-sm hover:underline text-zinc-600">
-                {{ __('ver calificaciones') }}
-            </a>
-             <a href="https://github.com/laravel/livewire-starter-kit" target="_blank" class="text-sm hover:underline text-zinc-600">
-                {{ __('Ver historial') }}
-            </a>
+           
         </nav>
 
         <div class="mt-auto flex items-center space-x-2">

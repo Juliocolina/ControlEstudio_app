@@ -2,17 +2,18 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Spatie\Permission\Traits\HasRoles; // Importa el trait HasRoles de Spatie
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
-use App\Models\Role;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+    // Usa el trait HasRoles para habilitar la gestión de roles y permisos con Spatie
+    use HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -22,7 +23,9 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'cedula', // Campo 'cedula' incluido en fillable
         'password',
+        'security_questions',
     ];
 
     /**
@@ -43,8 +46,9 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
+            // 'email_verified_at' => 'datetime', // Esta línea se ha eliminado ya que el campo no existe en la migración
             'password' => 'hashed',
+            'security_questions' => 'array',
         ];
     }
 
@@ -60,9 +64,8 @@ class User extends Authenticatable
             ->implode('');
     }
 
-    public function role()
+    public function estudiante()
     {
-        return $this->belongsTo(Role::class);
+        return $this->hasOne(Estudiante::class);
     }
-
 }

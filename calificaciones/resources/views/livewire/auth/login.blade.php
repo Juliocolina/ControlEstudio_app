@@ -20,7 +20,7 @@
         <!-- Password -->
         <div class="relative">
             <label for="password" class="label">{{ __('Contraseña') }}</label>
-            <input type="password" wire:model.defer="password" id="password" placeholder="{{ __('Contraseña') }}"
+            <input type="password" wire:model.defer="password" id="password" placeholder="{{ __('contraseña') }}"
                 class="input input-bordered w-full" required autocomplete="current-password">
             @error('password') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
 
@@ -40,7 +40,7 @@
 
         <div>
             <button type="submit" class="btn btn-primary w-full">
-                {{ __('Registrate') }}
+                {{ __('Entrar') }}
             </button>
         </div>
     </form>

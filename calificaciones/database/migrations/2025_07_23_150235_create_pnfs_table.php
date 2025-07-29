@@ -11,20 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-      Schema::create('roles', function (Blueprint $table) {
+        Schema::create('pnfs', function (Blueprint $table) {
     $table->id();
-    $table->string('name');
+    $table->string('nombre')->unique();     // Ej: 'Informática', 'Educación Integral'
+    $table->string('codigo')->nullable();   // Ej: 'INF-01', 'ADM-03'
+    $table->text('descripcion')->nullable();// Información adicional
     $table->timestamps();
 });
 
     }
 
-  
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('pnfs');
     }
 };

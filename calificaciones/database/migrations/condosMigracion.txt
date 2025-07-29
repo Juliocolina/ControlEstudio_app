@@ -1,5 +1,9 @@
 🧱 CREACIÓN DE MIGRACIONES
 
+php artisan migrate --path=database/migrations/2025_07_25_000000_create_roles_table.php
+
+php artisan db:seed --class=RolesAndPermissionsSeeder
+
 php artisan make:migration nombre_de_la_migracion
 Ejemplo:
 php artisan make:migration create_roles_table

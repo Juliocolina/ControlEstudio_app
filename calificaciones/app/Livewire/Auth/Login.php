@@ -11,6 +11,7 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
+use App\Models\User; // Asegúrate de que tu modelo User esté importado aquí
 
 #[Layout('components.layouts.auth')]
 class Login extends Component
@@ -26,44 +27,42 @@ class Login extends Component
     /**
      * Handle an incoming authentication request.
      */
-   public function login(): void
-{
-    $this->validate();
+    public function login(): void
+    {
+        $this->validate();
 
-    $this->ensureIsNotRateLimited();
+        $this->ensureIsNotRateLimited();
 
-    if (! Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
-        RateLimiter::hit($this->throttleKey());
+        if (! Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
+            RateLimiter::hit($this->throttleKey());
 
-        throw ValidationException::withMessages([
-            'email' => __('auth.failed'),
-        ]);
-    }
+            throw ValidationException::withMessages([
+                'email' => __('auth.failed'),
+            ]);
+        }
 
-    RateLimiter::clear($this->throttleKey());
-    Session::regenerate();
+        RateLimiter::clear($this->throttleKey());
+        Session::regenerate();
 
-    $rol = Auth::user()->role->name;
+        // Obtener el usuario autenticado y añadir un type hint para que el IDE lo reconozca
+        /** @var \App\Models\User $user */ // <-- ¡Esta es la línea clave para el IDE!
+        $user = Auth::user();
 
-    switch ($rol) {
-        case 'administrador':
+        // Usar los métodos de Spatie para verificar el rol
+        // El método hasRole() verifica si el usuario tiene el rol especificado
+        if ($user->hasRole('administrador')) {
             $this->redirect(route('admin.dashboard'), navigate: true);
-            break;
-        case 'coordinador':
+        } elseif ($user->hasRole('coordinador')) {
             $this->redirect(route('coordinador.panel'), navigate: true);
-            break;
-        case 'profesor':
+        } elseif ($user->hasRole('profesor')) {
             $this->redirect(route('profesor.home'), navigate: true);
-            break;
-        case 'estudiante':
+        } elseif ($user->hasRole('estudiante')) {
             $this->redirect(route('estudiante.area'), navigate: true);
-            break;
-        default:
+        } else {
+            // Redirección por defecto si el usuario no tiene ninguno de los roles específicos
             $this->redirect(route('dashboard'), navigate: true);
-            break;
+        }
     }
-}
-
 
     /**
      * Ensure the authentication request is not rate limited.
